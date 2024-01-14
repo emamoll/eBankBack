@@ -1,0 +1,1488 @@
+openapi: 3.0.0
+info:
+  title: Proyecto Backend de Emanuel Moll
+  description: Esta es la documentacion de mi proyecto final del curso de Programacion Backend de CoderHouse
+  version: 1.0.0
+  contact: 
+    name: Emanuel
+    email: emanuelgmoll@gmail.com
+servers:
+  - url: http://localhost:8080/api
+    description: Servidor Local
+
+components:
+  schemas:
+    loginData:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          description: Email del usuario
+        password:
+          type: string
+          description: Contraseña del usuario
+      example:
+        email: emailusuario@gmail.com
+        password: 123456abc
+    loggedData:
+      type: object
+      properties:
+        msg:
+          type: string
+          description: Mensaje de inicio de sesion con exito
+        token:
+          type: string
+          description: JSON Web Token
+      example:
+        msg: Inicio de sesion con exito
+        token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MzAyZDY2OWU0NzdjNWFjZDFhNzAwMGIiLCJlbWFpbCI6ImVtYW51ZWxnbW9sbEBnbWFpbC5jb20iLCJhZG1pbiI6dHJ1ZSwiaWF0IjoxNjYyMTQ5MDQ3LCJleHAiOjE2NjIyMDMwNDd9.7CP_uxlPwoDK51gTzbY21rtMcEdzn6OZhwcHCokPoPM
+    invalidFields:
+      type: object
+      properties:
+        msg:
+          type: string
+          description: Mensaje de error de inicio de sesion
+      example:
+        msg: Email o contraseña incorrectos
+    signupData:
+      type: object
+      required:
+        - email
+        - password
+        - confirmPassword
+        - firstName
+        - lastName
+        - age
+        - address
+        - cellphone
+      properties:
+        email: 
+          type: string
+          description: Email del usuario
+        password:
+          type: string
+          description: Contraseña del usuario
+        confirmPassword:
+          type: string
+          description: Confirmacion de la contraseña ingresada
+        firstName:
+          type: string
+          description: Nombre del usuario
+        lastName: 
+          type: string
+          description: Apellido del usuario
+        admin:
+          type: boolean
+          description: Validar para que el usuario sea o no administrador
+        age:
+          type: integer
+          description: Edad del usuario
+        address:
+          $ref: '#/components/schemas/addressData'
+        cellphone:
+            type: integer
+            description: Telefono del usuario
+      example:
+        email: emailusuario@gmail.com
+        password: 123456abc
+        confirmPassword: 123456abc
+        firstName: Nombre
+        lastName: Apellido
+        age: 25
+        address:
+          country: Argentina
+          city: Cordoba
+          street: Calle Usuario
+          number: 1010
+          postalCode: 5005
+        cellphone: 3515111111
+    addressData:
+      type: object
+      required:
+        - country
+        - city
+        - street
+        - number
+        - postalCode
+      properties:
+        country:
+          type: string
+          description: Pais donde vive el usuario
+        city:
+          type: string
+          description: Ciudad donde vive el usuario
+        street:
+          type: string
+          description: Calle donde vive el usuario
+        number:
+          type: integer
+          description: Numero de la calle donde vive el usuario
+        postalCode:
+          type: integer
+          description: Codigo postal de la zona donde vive el usuario
+      example:
+        country: Argentina
+        city: Cordoba
+        street: Calle usuario
+        number: 1010
+        postalCode: 5005   
+    signedData:
+      type: object
+      properties: 
+        msg: 
+          type: string
+          description: Mensaje de registro con exito
+      example: 
+        msg: Registro con exito
+    badRequest:
+      type: object
+      properties:
+        msg:
+          type: string
+          description: Error message
+      example:
+        msg: Bad Request
+    x-auth-token:
+      tipe: string
+      required: true
+      description: JSON Web Token
+      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MzAyZDY2OWU0NzdjNWFjZDFhNzAwMGIiLCJlbWFpbCI6ImVtYW51ZWxnbW9sbEBnbWFpbC5jb20iLCJhZG1pbiI6dHJ1ZSwiaWF0IjoxNjYyMTQ5MDQ3LCJleHAiOjE2NjIyMDMwNDd9.7CP_uxlPwoDK51gTzbY21rtMcEdzn6OZhwcHCokPoPM
+    cartData:
+      type: object
+      properties:
+        id: 
+          type: string
+          description: ID del carrito
+        userId:
+          type: string
+          description: ID del usuario
+        products:
+          type: array
+          description: Listado de los productos agregados al carrito
+        dateCreated:
+          type: string
+          description: Fecha de creacion del carrito
+        dateUpdated:
+          type: string
+          description: Fecha que se edito el carrito
+        userAddress:
+          $ref: '#/components/schemas/addressData'
+      example:
+        id: 6302d669e477c5acd1a7000b
+        userId: 6302d669f477c5acd1a8998c
+        products: 
+          productId: 6302d669e477c5acd1a7391v
+          amount: 1
+        dateCreated: 21-Aug-2022 22:05:45
+        dateUpdated: 21-Aug-2022 22:05:45
+        userAddress:
+          country: Argentina
+          city: Cordoba
+          street: Calle usuario
+          number: 1010
+          postalCode: 5005 
+    addProduct:
+      type: object
+      required:
+        - productId
+        - amount
+      properties:
+        productId:
+          type: string
+          description: ID del producto
+        amount:
+          type: integer
+          description: Cantidad del producto a agregar
+      example:
+        productId: 6302d669e477c5acd1a7000b
+        amount: 3
+    emptyCart:
+      type: object
+      properties:
+        msg:
+          type: string
+          description: Mensaje de carrito vacio
+        id: 
+          type: string
+          description: ID del carrito
+        userId:
+          type: string
+          description: ID del usuario
+        products:
+          type: array
+          description: Array vacio
+        dateCreated:
+          type: string
+          description: Fecha de creacion del carrito
+        dateUpdated:
+          type: string
+          description: Fecha que se edito el carrito
+        userAddress:
+          $ref: '#/components/schemas/addressData'
+      example:
+        msg: Carrito vacio
+        data:
+          id: 6302d669e477c5acd1a7000b
+          userId: 6302d669f477c5acd1a8998c
+          products: []
+          dateCreated: 21-Aug-2022 22:05:45
+          dateUpdated: 21-Aug-2022 22:05:45
+          userAddress:
+            country: Argentina
+            city: Cordoba
+            street: Calle usuario
+            number: 1010
+            postalCode: 5005
+    orderData:
+      type: object
+      properties:
+        msg:
+          type: string
+          description: Mensaje de orden creada
+        userId:
+          type: string
+          description: ID del usuario
+        products:
+          type: array
+          description: Lista de productos con cantidades y precios
+        status:
+          type: string
+          description: Estado de la orden
+        timestamp:
+          type: string
+          description: Fecha en que fue creada la orden
+        total:
+          type: integer
+          description: Monto total del carrito
+        id:
+          type: string
+          description: ID de la orden
+      example:
+        msg: Su orden fue creada
+        data:
+          userId: 6302d669e477c5acd1a7000b
+          products:
+            productId: 6302d669e477c5acd1a7391v
+            amount: 1
+            price: 100
+          status: Generated
+          timestamp: 21-Aug-2022 22:05:45
+          total: 100
+          id: 6302d669f477c5acd1a8998c
+    newOrder:
+      type: object
+      required:
+        - orderId
+      properties:
+        orderId:
+          type: string
+          description: ID de la orden
+      example:
+        orderId: 6302d669e477c5acd1a7000b
+    orderGet:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: ID del usuario
+        products:
+          type: array
+          description: Lista de productos con cantidades y precios
+        status:
+          type: string
+          description: Estado de la orden
+        timestamp:
+          type: string
+          description: Fecha en que fue creada la orden
+        total:
+          type: integer
+          description: Monto total del carrito
+        id:
+          type: string
+          description: ID de la orden
+      example:
+        data:
+          userId: 6302d669e477c5acd1a7000b
+          products:
+            - productId: 6302d669e477c5acd1a7391v
+              amount: 1
+              price: 100
+          status: Generated
+          timestamp: 21-Aug-2022 22:05:45
+          total: 100
+          id: 6302d669f477c5acd1a8998c
+    orderSend:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: ID del usuario
+        products:
+          type: array
+          description: Lista de productos con cantidades y precios
+        status:
+          type: string
+          description: Estado de la orden
+        timestamp:
+          type: string
+          description: Fecha en que fue creada la orden
+        total:
+          type: integer
+          description: Monto total del carrito
+        id:
+          type: string
+          description: ID de la orden
+      example:
+        data:
+          id: 6302d669f477c5acd1a8998c
+          userId: 6302d669e477c5acd1a7000b
+          products:
+            - productId: 6302d669e477c5acd1a7391v
+              amount: 1
+              price: 100
+          status: Send
+          timestamp: 21-Aug-2022 22:05:45
+          total: 100
+    categoryArray:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID de la categoria
+        name:
+          type: string
+          description: Nombre de la categoria
+        timestamp:
+          type: string
+          description: Fecha de creacion de la categoria
+      example:
+        id: 6302d669f477c5acd1a8998c
+        name: Nombre
+        timestamp: 21-Aug-2022 22:05:45
+    newCategory:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Nombre de la nueva categoria
+      example:
+        name: Nombre
+    categoryData:
+      type: object
+      properties:
+        msg: 
+          type: string
+          description: Mensaje de categoria creada
+        id:
+          type: string
+          description: ID de la categoria
+        name:
+          type: string
+          description: Nombre de la categoria
+        timestamp:
+          type: string
+          description: Fecha de creacion de la categoria
+      example:
+        msg: Categoria creada
+        data:
+          id: 6302d669f477c5acd1a8998c
+          name: Nombre
+          timestamp: 21-Aug-2022 22:05:45
+    categoryUpdated:
+      type: object
+      required:
+        - name
+      properties:
+        msg: 
+          type: string
+          description: Mensaje de categoria creada
+        id:
+          type: string
+          description: ID de la categoria
+        name:
+          type: string
+          description: Nombre de la categoria
+        timestamp:
+          type: string
+          description: Fecha de creacion de la categoria
+      example:
+        msg: Categoria editada
+        data:
+          id: 6302d669f477c5acd1a8998c
+          name: Nombre
+          timestamp: 21-Aug-2022 22:05:45
+    newImage:
+      type: object
+      required:
+        - productId
+        - filename 
+        - type
+      properties:
+        productId:
+          type: string
+          description: Producto de la imagen subida
+        filename:
+          type: string
+          description: Nombre de la imagen subida
+        type:
+          type: string
+          description: Tipo de la imagen subida
+    imageData:
+      type: object
+      properties:
+        msg:
+          type: string
+          description: Mensaje de imagen subida
+        productId:
+          type: string
+          description: Producto de la imagen subida
+        filename:
+          type: string
+          description: Nombre de la imagen subida
+        type:
+          type: string
+          description: Tipo de la imagen subida
+        timestamp:
+          type: string
+          description: Fecha de creacion de la imagen subida
+        item:
+          type: array
+          description: Array con todas las fotos del producto
+      example:
+        msg: La foto fue cargada
+        data:
+          productId: 6302d8b4b0d9c66cab9fabdd
+          filename: imagen.jpg,
+          type: JPG,
+          timestamp:  21-Aug-2022 22:05:45
+          id: 6314c1b05919d8e8f7bc65c0
+        items:
+          - id: 6302d8b4b0d9c66cab9fadas
+    imageGet:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID de la imagen
+        productId:
+          type: string
+          description: Producto de la imagen
+        filename:
+          type: string
+          description: Nombre de la imagen
+        type:
+          type: string
+          description: Tipo de la imagen
+        timestamp:
+          type: string
+          description: Fecha de creacion de la imagen
+      example:
+        data:
+          id: 6314c1b05919d8e8f7bc65c0
+          productId: 6302d8b4b0d9c66cab9fabdd
+          filename: imagen.jpg,
+          type: JPG,
+          timestamp: 21-Aug-2022 22:05:45 
+    productData:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID del producto
+        name:
+          type: string
+          description: Nombre del producto
+        description:
+          type: string
+          description: Descripcion del producto
+        categoryId:
+          type: string
+          description: Categoria a la que pertenece el producto
+        price:
+          type: number
+          description: Precio del producto
+        stock:
+          type: number
+          description: Stock del producto
+        image:
+          type: array
+          description: Array con las imagenes del producto
+        timestamp:
+          type: string
+          description: Fecha de creacion del producto
+      example:
+        data:
+          id: 6314c1b05919d8e8f7bc65c0
+          name: Nombre
+          description: Descripcion del producto
+          categoryId: 6302d8b4b0d9c66cab9fabdd
+          price: 100
+          stock: 30
+          image: 
+            - id: 6302d8b4b0d9c66cab9fadas
+    newProduct:
+      type: object
+      required:
+        - name
+        - description
+        - categoryId
+        - price
+        - stock
+      properties:
+        name:
+          type: string
+          description: Nombre del producto a crear
+        description:
+          type: string
+          description: Descripcion del producto a crear
+        categoryId:
+          type: string
+          description: Categoria del producto a crear
+        price:
+          type: number
+          description: Precio del producto a crear
+        stock:
+          type: number
+          description: Stock del producto a crear
+      example:
+        name: Nombre
+        description: Descripcion
+        categoryId: 6302d8b4b0d9c66cab9fadas
+        price: 100
+        stock: 30
+    newProductData:
+      type: object
+      properties:
+        msg:
+          type: string
+          description: Mensaje de producto creado
+        id:
+          type: string
+          description: ID del producto
+        name:
+          type: string
+          description: Nombre del producto
+        description:
+          type: string
+          description: Descripcion del producto
+        categoryId:
+          type: string
+          description: Categoria a la que pertenece el producto
+        price:
+          type: number
+          description: Precio del producto
+        stock:
+          type: number
+          description: Stock del producto
+        image:
+          type: array
+          description: Array con las imagenes del producto
+        timestamp:
+          type: string
+          description: Fecha de creacion del producto
+      example:
+        msg: Producto creado
+        newProduct:
+          name: Nombre
+          description: Descripcion del producto
+          categoryId: 6302d8b4b0d9c66cab9fabdd
+          price: 100
+          stock: 30
+          image: []
+          timestamp: 21-Aug-2022 22:05:45 
+          id: 6314c1b05919d8e8f7bc65c0
+    productUpdated:
+      type: object
+      properties:
+        msg:
+          type: string
+          description: Mensaje de modificacion del producto
+        id:
+          type: string
+          description: ID del producto
+        name:
+          type: string
+          description: Nombre del producto
+        description:
+          type: string
+          description: Descripcion del producto
+        categoryId:
+          type: string
+          description: Categoria a la que pertenece el producto
+        price:
+          type: number
+          description: Precio del producto
+        stock:
+          type: number
+          description: Stock del producto
+        image:
+          type: array
+          description: Array con las imagenes del producto
+        timestamp:
+          type: string
+          description: Fecha de creacion del producto
+      example:
+        msg: Producto actualizado
+        data:
+          id: 6314c1b05919d8e8f7bc65c0
+          name: Nombre
+          description: Descripcion del producto
+          categoryId: 6302d8b4b0d9c66cab9fabdd
+          price: 100
+          stock: 30
+          image: 
+            - id: 6302d8b4b0d9c66cab9fadas
+    usersData:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID del usuario
+        email:
+          type: string
+          description: Email del usuario
+        password:
+          type: string
+          description: Contraseña encriptada del usuario
+        firstName:
+          type: string
+          description: Nombre del usuario
+        lastName:
+          type: string
+          description: Apellido del usuario
+        age:
+          type: integer
+          description: Edad del usuario
+        admin:
+          type: boolean
+          description: False si no es administrados
+        cellphone:
+          type: integer
+          description: Telefono del usuario
+        address:
+          $ref: '#/components/schemas/addressData'
+        timestamp:
+          type: string
+          description: Fecha de creacion del usuario
+      example:
+        id: 6302d669e477c5acd1a7000b
+        password: $2b$10$y4y5ChQHZHXiMQnr2YFBUOFYt.0XoXlkBlB1xw0nX2mRCyLFli/QW
+        firstName: Nombre
+        lastName: Apellido
+        age: 25
+        admin: False
+        cellphone: 3515111111
+        address: 
+          country: Argentina
+          city: Cordoba
+          street: Calle Usuario
+          number: 1010
+          postalCode: 5005
+
+paths:
+  /auth/login:
+    post:
+      summary: Inicio de sesion del usuario
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/loginData'
+      responses:
+        200:
+          description: Inicio de sesion con extio
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/loggedData'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalidFields'
+  /auth/signup:
+    post:
+      summary: Registro de usuario nuevo
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/signupData'
+      responses:
+        200: 
+          description: Registro con exito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/signedData'
+        400:
+          description: Error en el registro
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+  /cart:
+    get:
+      summary: Retorna el carrito del usuario
+      tags:
+        - Carts
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+      responses:
+        200:
+          description: Carrito del usuario 
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/cartData'
+        400:
+          description: Error al buscar el carrito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+  /addProduct:
+    post:
+      summary: Agrega un producto al carrito
+      tags: 
+        - Carts
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addProduct'
+      responses:
+        200:
+          description: Carrito del usuario con el producto agregado
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/cartData'
+        400:
+          description: Error al agregar un producto nuevo al carrito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+  /removeProduct:
+    post:
+      summary: Elimina un producto al carrito
+      tags: 
+        - Carts
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addProduct'
+      responses:
+        200:
+          description: Carrito del usuario con el producto eliminado
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/cartData'
+        400:
+          description: Error al eliminar un producto nuevo del carrito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+  /emptyCart:
+    get:
+      summary: Retorna el carrito vacio
+      tags:
+        - Carts
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+      responses:
+        200:
+          description: Carrito del usuario vacio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/emptyCart'
+        400:
+          description: Error al vaciar el carrito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'   
+  /submit:
+    get:
+      summary: Al carrito lo envia a ordenes y despues lo vacia
+      tags: 
+        - Carts
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+      responses:
+        200:
+          description: Retorna la orden creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderData'
+        400:
+          description: Error al confirmar el carrito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest' 
+  /categories:
+    get:
+      summary: Retorna todas las categorias
+      tags: 
+        - Categories
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+      responses:
+        200:
+          description: Array con todas las categorias
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/categoryArray'
+        400:
+          description: Error al buscar las categorias
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest' 
+  /categories/createCategory:
+    post:
+      summary: Crea una nueva categoria
+      tags: 
+        - Categories
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/newCategory'
+      responses:
+        200:
+          description: Retorna la nueva categoria
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/categoryData'
+        400:
+          description: Error al crear la categoria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest' 
+  /categories/:id:
+    get:
+      summary: Retorna una categoria segun su id
+      tags: 
+        - Categories
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+        - in : path
+          name: id
+          required: true
+          schema: 
+            type: string
+            example: 6302d669e477c5acd1a7000b
+      responses:  
+        200:
+          description: Categoria buscada
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/categoryArray'
+        400:
+          description: Error al buscar la categoria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest' 
+    put:
+      summary: Edita una categoria segun su id
+      tags: 
+        - Categories
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+        - in : path
+          name: id
+          required: true
+          schema: 
+            type: string
+            example: 6302d669e477c5acd1a7000b
+      requestBody:
+        required: true
+          content:
+            application/json:
+              schema:
+                $ref: 
+                  '#/components/schemas/newCategory'
+      responses:
+        200:
+          description: Retorna la categoria editada
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/categoryUpdated'
+        400:
+          description: Error al editar la categoria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest' 
+    delete:
+      summary: Elimina una categoria segun su id
+      tags: 
+        - Categories
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+        - in : path
+          name: id
+          required: true
+          schema: 
+            type: string
+            example: 6302d669e477c5acd1a7000b
+      responses:
+        200:
+          description: Mensaje de eliminacion
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    description: Mensaje de eliminacion
+                example: 
+                  msg: Categoria eliminado
+        400:
+          description: Error al eliminar la categoria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+  /images/upload:
+    post:
+      summary: Sube una nueva imagen
+      tags: 
+        - Images
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/newImage'
+      responses:
+        200:
+          description: Retorna la imagen subida
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/imageData'
+        400:
+          description: Error al subir la imagen
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+  /images/:id:
+    get:
+      summary: Muestra una imagen segun el id
+      tags: 
+        - Images
+      parameters:
+        - in : path
+          name: id
+          required: true
+          schema: 
+            type: string
+            example: 6302d669e477c5acd1a7000b
+      responses:
+        200:
+          description: Retorna la imagen subida
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/imageGet'
+        400:
+          description: Error al buscar la imagen
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+    delete: 
+      summary: Elimina una imagen segun su id
+      tags: 
+        - Images
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+        - in : path
+          name: id
+          required: true
+          schema: 
+            type: string
+            example: 6302d669e477c5acd1a7000b
+      responses:
+        200:
+          description: Mensaje de eliminacion
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    description: Mensaje de eliminacion
+                example: 
+                  msg: Imagen eliminada
+        400:
+          description: Error al eliminar la imagen
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+  /orders:
+    get:
+      summary: Retorna todas las ordenes
+      tags:
+        - Orders
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+      responses:
+        200: 
+          description: Muestra todas las ordenes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/orderData'
+        400:
+          description: Error al buscar las ordenes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest' 
+  /orders/:orderId:
+    get:
+      summary: Retorna una orden segun el id
+      tags: 
+        - Orders
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+        - in : path
+          name: id
+          required: true
+          schema: 
+            type: string
+            example: 6302d669e477c5acd1a7000b
+      responses:
+        200: 
+          description: Muestra la ordene buscada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderGet'
+        400:
+          description: Error al buscar la orden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest' 
+  /orders/complete:
+    post:
+      summary: Se envia la orden
+      tags:
+        - Orders
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/newOrder'
+      responses:
+        200: 
+          description: Muestra la ordene buscada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderSend'
+        400:
+          description: Error al enviar la orden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest' 
+  /products/:id?:
+    get:
+      summary: Retorna todos los productos o el producto que se busque
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          required: false
+          schema: 
+            type: string
+            example: 6302d669e477c5acd1a7000b
+        - in: query
+          name: name
+          required: false
+          schema: 
+            type: string
+            example: Nombre
+        - in: query
+          name: description
+          required: false
+          schema: 
+            type: string
+            example: Descripcion
+        - in: query
+          name: categoryId
+          required: false
+          schema: 
+            type: string
+            example: 6302d669e477c5acd1a7000b
+        - in: query
+          name: price
+          required: false
+          schema: 
+            type: number
+            example: 100
+        - in: query
+          name: stock
+          required: false
+          schema: 
+            type: number
+            example: 30
+      responses:
+        200:
+          description: Array con los productos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/productData'
+        400:
+          description: Error al buscar el o los productos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest' 
+  /products/createProduct:
+    post: 
+      summary: Se crea un nuevo producto
+      tags:   
+        - Products
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/newProduct' 
+      responses:
+        200:
+          description: Retorna el producto nuevo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/newProductData'
+        400:
+          description: Error al crear el producto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest' 
+  /products/:categoryId:
+    get:
+      summary: Retorna todos los productos de la categoria
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: categoryId
+          required: true
+          schema: 
+            type: string
+            example: NombreCategoria
+      responses:
+        200:
+          description: Array con los productos de la categoria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/productData'
+        400:
+          description: Error al buscar los productos segun la categoria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest' 
+  /products/:id:
+    patch:
+      summary: Modificar un producto
+      tags:
+        - Products
+      paramaters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+        - in: path
+          name: id
+          required: true
+          schema: 
+            type: string
+            example: 6302d669e477c5acd1a7000b
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/newProduct'
+      responses:
+        200:
+          description: Retorna el producto modificado
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/productUpdated'
+        400:
+          description: Error al editar el producto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest' 
+    delete:
+      summary: Elimina un producto segun su id
+      tags: 
+        - Products
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+        - in : path
+          name: id
+          required: true
+          schema: 
+            type: string
+            example: 6302d669e477c5acd1a7000b
+      responses:
+        200:
+          description: Mensaje de eliminacion
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    description: Mensaje de eliminacion
+                example: 
+                  msg: Producto eliminada
+        400:
+          description: Error al eliminar el producto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+  /users:
+    get:
+      summary: Retorna todos los usuarios registrados
+      tags: 
+        - Users
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+      responses:
+        200:
+          description: Usuarios registrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/usersData'
+        400:
+          description: Error al buscar los usuarios
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+  /users/{id}:
+    get:
+      summary: Retorna el usuario buscado por el id
+      tags:
+        - Users
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+        - in : path
+          name: id
+          required: true
+          schema: 
+            type: string
+            example: 6302d669e477c5acd1a7000b
+      responses:
+        200:
+          description: Usuario buscado por el id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/usersData'
+        400:
+          description: Error al buscar el usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+    delete:
+      summary: Elimina el usuario por el id
+      tags:
+        - Users
+      parameters:
+        - in: header
+          name: x-auth-token
+          required: true
+          schema:
+            $ref: '#/components/schemas/x-auth-token'
+        - in : path
+          name: id
+          required: true
+          schema: 
+            type: string
+            example: 6302d669e477c5acd1a7000b
+      responses:
+        200:
+          description: Mensaje de eliminacion
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    description: Mensaje de eliminacion
+                example: 
+                  msg: Usuario eliminado
+        400:
+          description: Error al eliminar el usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/badRequest'
+
